@@ -1,0 +1,67 @@
+﻿@using Rss.MVC.Helpers
+
+@model Rss.MVC.ViewModals.RssItemModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <table class="table">
+        <tr>
+            <th>
+                Источник
+            </th>
+            <th>
+                Название новости
+            </th>
+            <th>
+                Описание новости
+            </th>
+            <th>
+                Дата публикации
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.RssItems)
+        {
+            <tr>
+                <td>
+                    @if (item.Link.Contains("interfax"))
+                    {
+                        <p>Интерфакс</p>
+                    }
+                    else
+                    {
+                        <p>Хабр</p>
+                    }
+                </td>
+                <td>
+                    <a href="@Html.DisplayFor(modelItem => item.Link)">@Html.DisplayFor(modelItem => item.Title)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+            </tr>
+        }
+    </table>
+
+    <br />
+    <div class="btn-group">
+        <div id="pager">
+            @Html.PageLinks(Model.PageInfo, x => Url.Action("SearchIndex", new { page = x }))
+        </div>
+    </div>
+</body>
+
+
+</html>
+
+@Scripts.Render("~/scripts/RssItem/Index.js")

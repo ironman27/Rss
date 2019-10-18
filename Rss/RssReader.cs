@@ -1,11 +1,9 @@
 ﻿using DAL;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Xml;
 
 namespace Rss
 {
@@ -13,14 +11,19 @@ namespace Rss
     {
         public static IEnumerable<RssItem> GetRssFeed(string url)
         {
-            XDocument feedXml = XDocument.Load(url);
-            var feeds = from feed in feedXml.Descendants("item")
+            XmlReader reader = XmlReader.Create(url);
+            SyndicationFeed feed = SyndicationFeed.Load(reader);
+            reader.Close();
+
+            var feeds = from item in feed.Items
                         select new RssItem
                         {
-                            Title = feed.Element("title").Value,
-                            Link = feed.Element("link").Value,
-                            Description = Regex.Match(feed.Element("description").Value, @"^.{1,180}\b(?<!\s)").Value
+                            Title = item.Title.Text,
+                            Link = item.Links.Any() ? item.Links.FirstOrDefault().Uri.AbsoluteUri : string.Empty,
+                            Description = Regex.Match(item.Summary.Text, @"^.{1,180}\b(?<!\s)").Value,
+                            Date = item.PublishDate.DateTime
                         };
+
             return feeds;
         }
 
