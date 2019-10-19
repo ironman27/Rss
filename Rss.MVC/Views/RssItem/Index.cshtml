@@ -1,4 +1,7 @@
-﻿@model Rss.MVC.ViewModals.RssItemModel
+﻿@*@model PagedList.IPagedList<Rss.MVC.ViewModals.RssItemModel>*@
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @using DAL
 @using DAL.Extensions
 
@@ -13,8 +16,9 @@
 
 <h2>Новостная лента</h2>
 
-@using (Ajax.BeginForm("SearchIndex", "RssItem", new AjaxOptions { UpdateTargetId = "results", HttpMethod = "post" }))
+@using (Ajax.BeginForm("IndexSearch", "RssItem", new AjaxOptions { UpdateTargetId = "results", HttpMethod = "post" }))
 {
+    @*@Html.AntiForgeryToken()*@
     <p>
         Источник ленты
         @Html.DropDownList("resource",
@@ -29,9 +33,7 @@
 <br />
 
 <div id="results">
-    @Html.Partial("~/Views/Shared/_RssItemGrid.cshtml", Model)
+    @Html.Partial("~/Views/Shared/_RssItemGrid.cshtml")
 </div>
 
-@*@Scripts.Render("~/scripts/jquery-3.3.1.min.js")
-@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.min.js")*@
-@Scripts.Render("~/scripts/RssItem/Index.js")
+@*@Scripts.Render("~/scripts/RssItem/Index.js")*@

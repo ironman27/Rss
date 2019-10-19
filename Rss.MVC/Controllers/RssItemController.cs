@@ -1,6 +1,5 @@
 ﻿using DAL;
-using Rss.MVC.ViewModals;
-using System;
+using PagedList;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -13,52 +12,69 @@ namespace Rss.MVC.Controllers
     {
         private ApplicationContext db = new ApplicationContext();
 
-        public async Task<ActionResult> Index(int page = 1)
+        int pageSize = 10;
+
+        public async Task<ActionResult> Index(int? page)
         {
-            var rssItems = from s in db.Rsses
-                           select s;
-
-            var items = await rssItems.ToListAsync();
-
-            int pageSize = 10;
-            PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItems = items.Count };
-            IEnumerable<RssItem> itemsPerPages = items.Skip((page - 1) * pageSize).Take(pageSize);
-            RssItemModel rim = new RssItemModel { PageInfo = pageInfo, RssItems = itemsPerPages };
-            return View(rim);
+            var rssItems = await (from s in db.Rsses
+                                  select s).ToListAsync();
+            
+            int pageNumber = (page ?? 1);
+            return View(rssItems.ToPagedList(pageNumber, pageSize));
         }
 
-
         [HttpPost]
-        public async Task<ActionResult> SearchIndex(Resource resource = Resource.All, string sort = null, int page = 1)
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> IndexSearch(int? page, string sort, Resource? resource)
         {
-            var rssItems = from s in db.Rsses
-                           select s;
-
-            if (resource != Resource.All)
+            if (!ModelState.IsValid)
             {
-                rssItems = rssItems.Where(r => r.Link.Contains(resource.ToString()));
+                return RedirectToAction("");
             }
 
-            switch (sort)
+            ViewBag.Sort = sort;
+            ViewBag.Resource = resource;
+
+            List<RssItem> rssItemList = Session["rssItemList"] as List<RssItem>;
+
+            Resource? resourceState = Session["resourceState"] as Resource?;
+            string sortState = Session["sortState"] as string;
+
+            if (rssItemList == null || resource != resourceState || sort != sortState)
             {
-                case "Date":
-                    rssItems = rssItems.OrderByDescending(s => s.Date);
-                    break;
-                case "Url":
-                    rssItems = rssItems
-                        .OrderBy(s => s.Link);
-                    break;
-                default:
-                    break;
+                Session["resourceState"] = resource;
+                Session["sortState"] = sort;
+
+                var rssItems = from s in db.Rsses
+                               select s;
+
+                Session["rssItemList"] = rssItems;
+
+                if (resource != Resource.All)
+                {
+                    rssItems = rssItems.Where(r => r.Link.Contains(resource.ToString()));
+                }
+
+                switch (sort)
+                {
+                    case "Date":
+                        rssItems = rssItems.OrderByDescending(s => s.Date);
+                        break;
+                    case "Url":
+                        rssItems = rssItems
+                            .OrderBy(s => s.Link);
+                        break;
+                    default:
+                        break;
+                }
+
+                rssItemList = await rssItems.ToListAsync();
+
+                Session["rssItemList"] = rssItemList;
             }
-
-            var items = await rssItems.ToListAsync();
-
-            int pageSize = 10;
-            PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItems = items.Count };
-            IEnumerable<RssItem> itemsPerPages = items.Skip((page - 1) * pageSize).Take(pageSize);
-            RssItemModel rim = new RssItemModel { PageInfo = pageInfo, RssItems = itemsPerPages };
-            return PartialView("_RssItemGrid", rim);
+            
+            int pageNumber = (page ?? 1);
+            return PartialView("_RssItemGrid", rssItemList.ToPagedList(pageNumber, pageSize));
         }
 
         protected override void Dispose(bool disposing)

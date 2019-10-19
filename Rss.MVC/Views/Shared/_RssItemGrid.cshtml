@@ -1,6 +1,9 @@
-﻿@using Rss.MVC.Helpers
+﻿@model PagedList.IPagedList<DAL.RssItem>
 
-@model Rss.MVC.ViewModals.RssItemModel
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @{
     Layout = null;
 }
@@ -27,7 +30,7 @@
             <th></th>
         </tr>
 
-        @foreach (var item in Model.RssItems)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>
@@ -56,12 +59,19 @@
     <br />
     <div class="btn-group">
         <div id="pager">
-            @Html.PageLinks(Model.PageInfo, x => Url.Action("SearchIndex", new { page = x }))
+            Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+            @Html.PagedListPager(Model, page => Url.Action("IndexSearch",
+                new { page = page, sort = ViewBag.Sort, resource = ViewBag.Resource }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(PagedListRenderOptions.Classic,
+        new AjaxOptions
+        {
+            InsertionMode = InsertionMode.Replace,
+            HttpMethod = "Post",
+            UpdateTargetId = "results"
+        }))
         </div>
     </div>
 </body>
-
-
 </html>
 
 @Scripts.Render("~/scripts/RssItem/Index.js")
