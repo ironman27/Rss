@@ -10,7 +10,7 @@ namespace Rss
             foreach (var blog in blogs)
             {
                 var feeds = RssReader.GetRssFeed(blog);
-                var writeCount = RssReader.Save(feeds);
+                var writeCount = RssReader.Save(feeds).GetAwaiter().GetResult();
 
                 Console.WriteLine(blog);
                 Console.WriteLine("Read count {0}", feeds.Count());

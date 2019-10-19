@@ -2,6 +2,7 @@
 
 namespace DAL.Extensions
 {
+    [Obsolete]
     public static class ResourceExt
     {
         public static string AsDisplayString(this Resource resource)

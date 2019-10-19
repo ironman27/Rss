@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rss.MVC", "Rss.MVC\Rss.MVC.csproj", "{9BC74D59-A043-4F85-ADFF-96A7DF049D89}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rss.Contract", "Rss.Contract\Rss.Contract.csproj", "{F0347FD3-D193-4141-AAD7-1F6EC7739500}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9BC74D59-A043-4F85-ADFF-96A7DF049D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BC74D59-A043-4F85-ADFF-96A7DF049D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BC74D59-A043-4F85-ADFF-96A7DF049D89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0347FD3-D193-4141-AAD7-1F6EC7739500}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0347FD3-D193-4141-AAD7-1F6EC7739500}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0347FD3-D193-4141-AAD7-1F6EC7739500}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0347FD3-D193-4141-AAD7-1F6EC7739500}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

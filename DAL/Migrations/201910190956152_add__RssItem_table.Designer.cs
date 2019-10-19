@@ -7,13 +7,13 @@ namespace DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.0.0-20911")]
-    public sealed partial class adddate : IMigrationMetadata
+    public sealed partial class add__RssItem_table : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(adddate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(add__RssItem_table));
         
         string IMigrationMetadata.Id
         {
-            get { return "201910171558596_add+date"; }
+            get { return "201910190956152_add__RssItem_table"; }
         }
         
         string IMigrationMetadata.Source

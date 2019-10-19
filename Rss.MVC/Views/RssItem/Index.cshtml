@@ -6,12 +6,13 @@
 @using DAL.Extensions
 
 @{
-    var resources = from Resource resource in Enum.GetValues(typeof(Resource))
-                    select new SelectListItem
-                    {
-                        Value = resource.ToString(),
-                        Text = resource.AsDisplayString()
-                    };
+    //var resources = from Resource resource in Enum.GetValues(typeof(Resource))
+    //                select new SelectListItem
+    //                {
+    //                    Value = resource.ToString(),
+    //                    Text = resource.AsDisplayString()
+    //                };
+    var resources = ViewBag.Hosts as IEnumerable<SelectListItem>;
 }
 
 <h2>Новостная лента</h2>
@@ -23,6 +24,7 @@
         Источник ленты
         @Html.DropDownList("resource",
     new SelectList(resources, "Value", "Text"),
+    "Все",
     new { @class = "form-control" })
 
         @Html.RadioButton("sort", "Date") Сортировать по дате
@@ -35,5 +37,3 @@
 <div id="results">
     @Html.Partial("~/Views/Shared/_RssItemGrid.cshtml")
 </div>
-
-@*@Scripts.Render("~/scripts/RssItem/Index.js")*@

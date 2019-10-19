@@ -1,13 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DAL
+namespace Rss.Contract
 {
     public class RssItem
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public Guid RssItemId { get; set; }
 
         public string Link { get; set; }
@@ -20,5 +20,4 @@ namespace DAL
 
         public string Host { get; set; }
     }
-
 }

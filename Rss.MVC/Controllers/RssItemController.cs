@@ -18,18 +18,25 @@ namespace Rss.MVC.Controllers
         {
             var rssItems = await (from s in db.Rsses
                                   select s).ToListAsync();
-            
+
+            ViewBag.Hosts = rssItems.OrderBy(r => r.Host).Select(r => r.Host).Distinct().Select(x =>
+                                 new SelectListItem()
+                                 {
+                                     Value = x.ToString(),
+                                     Text = x.ToString()
+                                 });
+
             int pageNumber = (page ?? 1);
             return View(rssItems.ToPagedList(pageNumber, pageSize));
         }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> IndexSearch(int? page, string sort, Resource? resource)
+        public async Task<ActionResult> IndexSearch(int? page, string sort, string resource)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("");
+                return RedirectToAction("Index");
             }
 
             ViewBag.Sort = sort;
@@ -37,7 +44,7 @@ namespace Rss.MVC.Controllers
 
             List<RssItem> rssItemList = Session["rssItemList"] as List<RssItem>;
 
-            Resource? resourceState = Session["resourceState"] as Resource?;
+            string resourceState = Session["resourceState"] as string;
             string sortState = Session["sortState"] as string;
 
             if (rssItemList == null || resource != resourceState || sort != sortState)
@@ -50,9 +57,9 @@ namespace Rss.MVC.Controllers
 
                 Session["rssItemList"] = rssItems;
 
-                if (resource != Resource.All)
+                if (!string.IsNullOrEmpty(resource))
                 {
-                    rssItems = rssItems.Where(r => r.Link.Contains(resource.ToString()));
+                    rssItems = rssItems.Where(r => r.Host == resource);
                 }
 
                 switch (sort)
@@ -73,7 +80,14 @@ namespace Rss.MVC.Controllers
                 Session["rssItemList"] = rssItemList;
             }
             
-            int pageNumber = (page ?? 1);
+            ViewBag.Hosts = rssItemList.OrderBy(r => r.Host).Select(r => r.Host).Distinct().Select(x =>
+                                  new SelectListItem()
+                                  {
+                                      Value = x.ToString(),
+                                      Text = x.ToString()
+                                  });
+
+            int pageNumber = page ?? 1;
             return PartialView("_RssItemGrid", rssItemList.ToPagedList(pageNumber, pageSize));
         }
 

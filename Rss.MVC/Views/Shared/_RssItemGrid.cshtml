@@ -34,20 +34,16 @@
         {
             <tr>
                 <td>
-                    @if (item.Link.Contains("interfax"))
-                    {
-                        <p>Интерфакс</p>
-                    }
-                    else
-                    {
-                        <p>Хабр</p>
-                    }
+                    <p>@Html.DisplayFor(modelItem => item.Host)</p>
                 </td>
                 <td>
                     <a href="@Html.DisplayFor(modelItem => item.Link)">@Html.DisplayFor(modelItem => item.Title)</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @if (!item.Description.StartsWith("<"))
+                    {
+                        @Html.DisplayFor(modelItem => item.Description)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Date)
