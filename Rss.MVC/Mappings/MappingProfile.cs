@@ -1,23 +1,16 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rss.MVC.Mappings
 {
+    [Obsolete]
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            //CreateMap<Entities.Employee, Contracts.Employee>()
-            //    .ForMember(d => d.ManagerName, opt => opt.MapFrom(v => v.Manager != null ? v.Manager.Name : ""))
-            //    //.ForMember(d => d.Position, opt => opt.ConvertUsing<Entities.Position>(new EnumValueConverter<Entities.Position, Contracts.Position>(), u => u.Position))
-            //    ;
-
-            //CreateMap<Contracts.Employee, Entities.Employee>()
-            ////.ForMember(i => i., opt => opt.Ignore())
-            ;
+            CreateMap<DAL.RssItem, Rss.Contract.RssItem>()
+                .ForMember(d => d.Description, opt => opt.MapFrom(v => v.Description != null ? (v.Description.StartsWith("<") ? "": v.Description.Replace("<br />", "")) : ""));
+            
         }
     }
 

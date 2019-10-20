@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using AutoMapper;
 
 namespace Rss.MVC.Controllers
 {
@@ -14,20 +15,31 @@ namespace Rss.MVC.Controllers
 
         int pageSize = 10;
 
+        public RssItemController()
+        {
+            Mapper.Initialize(cfg => 
+            cfg.CreateMap<RssItem, Rss.Contract.RssItem>()
+            .ForMember(d => d.Description, opt => opt.MapFrom(v => v.Description != null ? (v.Description.StartsWith("<") ? "" : v.Description.Replace("<br", "")) : ""))
+            );  
+        }
+
         public async Task<ActionResult> Index(int? page)
         {
-            var rssItems = await (from s in db.Rsses
+            var entityRssItems = await (from s in db.Rsses
                                   select s).ToListAsync();
 
-            ViewBag.Hosts = rssItems.OrderBy(r => r.Host).Select(r => r.Host).Distinct().Select(x =>
+            var contractRssItems =
+                Mapper.Map<List<RssItem>, List<Rss.Contract.RssItem>>(entityRssItems);
+            
+            ViewBag.Hosts = contractRssItems.OrderBy(r => r.Host).Select(r => r.Host).Distinct().Select(x =>
                                  new SelectListItem()
                                  {
                                      Value = x.ToString(),
                                      Text = x.ToString()
                                  });
 
-            int pageNumber = (page ?? 1);
-            return View(rssItems.ToPagedList(pageNumber, pageSize));
+            int pageNumber = page ?? 1;
+            return View(contractRssItems.ToPagedList(pageNumber, pageSize));
         }
 
         [HttpPost]
@@ -42,12 +54,12 @@ namespace Rss.MVC.Controllers
             ViewBag.Sort = sort;
             ViewBag.Resource = resource;
 
-            List<RssItem> rssItemList = Session["rssItemList"] as List<RssItem>;
+            List<Contract.RssItem> contractRssItems = Session["rssItemList"] as List<Contract.RssItem>;
 
             string resourceState = Session["resourceState"] as string;
             string sortState = Session["sortState"] as string;
 
-            if (rssItemList == null || resource != resourceState || sort != sortState)
+            if (contractRssItems == null || resource != resourceState || sort != sortState)
             {
                 Session["resourceState"] = resource;
                 Session["sortState"] = sort;
@@ -69,18 +81,21 @@ namespace Rss.MVC.Controllers
                         break;
                     case "Url":
                         rssItems = rssItems
-                            .OrderBy(s => s.Link);
+                            .OrderBy(s => s.Host);
                         break;
                     default:
                         break;
                 }
 
-                rssItemList = await rssItems.ToListAsync();
+                List<RssItem> rssItemList = await rssItems.ToListAsync();
 
-                Session["rssItemList"] = rssItemList;
+                contractRssItems =
+                    Mapper.Map<List<RssItem>, List<Rss.Contract.RssItem>>(rssItemList);
+                
+                Session["rssItemList"] = contractRssItems;
             }
             
-            ViewBag.Hosts = rssItemList.OrderBy(r => r.Host).Select(r => r.Host).Distinct().Select(x =>
+            ViewBag.Hosts = contractRssItems.OrderBy(r => r.Host).Select(r => r.Host).Distinct().Select(x =>
                                   new SelectListItem()
                                   {
                                       Value = x.ToString(),
@@ -88,7 +103,7 @@ namespace Rss.MVC.Controllers
                                   });
 
             int pageNumber = page ?? 1;
-            return PartialView("_RssItemGrid", rssItemList.ToPagedList(pageNumber, pageSize));
+            return PartialView("_RssItemGrid", contractRssItems.ToPagedList(pageNumber, pageSize));
         }
 
         protected override void Dispose(bool disposing)

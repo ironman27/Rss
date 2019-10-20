@@ -208,6 +208,10 @@
       <Project>{92fc3e1d-3961-4ba6-9ac0-15d8125d000d}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Rss.Contract\Rss.Contract.csproj">
+      <Project>{f0347fd3-d193-4141-aad7-1f6ec7739500}</Project>
+      <Name>Rss.Contract</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

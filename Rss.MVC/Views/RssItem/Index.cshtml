@@ -1,29 +1,14 @@
-﻿@*@model PagedList.IPagedList<Rss.MVC.ViewModals.RssItemModel>*@
-
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
-
-@using DAL
-@using DAL.Extensions
-
-@{
-    //var resources = from Resource resource in Enum.GetValues(typeof(Resource))
-    //                select new SelectListItem
-    //                {
-    //                    Value = resource.ToString(),
-    //                    Text = resource.AsDisplayString()
-    //                };
-    var resources = ViewBag.Hosts as IEnumerable<SelectListItem>;
-}
+﻿<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Новостная лента</h2>
 
 @using (Ajax.BeginForm("IndexSearch", "RssItem", new AjaxOptions { UpdateTargetId = "results", HttpMethod = "post" }))
 {
-    @*@Html.AntiForgeryToken()*@
+    @Html.AntiForgeryToken()
     <p>
         Источник ленты
         @Html.DropDownList("resource",
-    new SelectList(resources, "Value", "Text"),
+    new SelectList(ViewBag.Hosts as IEnumerable<SelectListItem>, "Value", "Text"),
     "Все",
     new { @class = "form-control" })
 
